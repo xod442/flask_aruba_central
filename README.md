@@ -23,9 +23,11 @@ flask-aruba-central1%  docker-compose up -d
 # Test api directory
 flask-aruba-central/tests
 
-./test.py
 
-# Edit pycentral central_info.py file ==> utility/central_info.py
+## Edit pycentral central_info.py file ==> utility/central_info.py
+It is necessary to fill out the required fields in this dictionary.
+If you do not, there will be great sadness. :-)
+
 ```
 central_info = {
            "username": "email@address.com",
@@ -39,3 +41,5 @@ central_info = {
 ```
 
 Get the values from Aruba Central API page
+[Here is some very good documentation on what to do]:
+(https://developer.arubanetworks.com/aruba-central/docs/api-getting-started).
