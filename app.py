@@ -66,20 +66,12 @@ Home
 #-------------------------------------------------------------------------------
 '''
 
-@app.route("/home", methods=('GET', 'POST'))
-def home():
+@app.route("/home/<string:message>", methods=('GET', 'POST'))
+def home(message):
 
-    my_central = []
-    info = db.central.find({})
-    docs = loads(dumps(info))
-    for d in docs:
-        group_name = d['group_name']
-        description = d['description']
 
-        info2 = [number, group_name, description]
-        my_central.append(info2)
-    message = "Operation completed successfully"
-    return render_template('home1.html', message=message, my_central=my_central)
+    # message = "Operation completed successfully"
+    return render_template('home1.html', message=message)
 
 
 
@@ -124,8 +116,6 @@ def get_groups():
 
     central = get_client()
 
-    my_central = []
-
     all_groups = Groups()
 
     response = all_groups.get_groups(conn=central,limit=50)
@@ -163,3 +153,42 @@ def delete_group():
     groups = (response['msg']['data'])
 
     return render_template('delete_group.html', groups=groups)
+
+'''
+#-------------------------------------------------------------------------------
+Mongo Section
+#-------------------------------------------------------------------------------
+'''
+@app.route("/groups2mongo", methods=('GET', 'POST'))
+def groups2mongo():
+    central = get_client()
+
+    all_groups = Groups()
+
+    response = all_groups.get_groups(conn=central,limit=50)
+
+    groups = (response['msg']['data'])
+
+    for g in groups:
+        entry = {
+            'group_name': g[0]
+        }
+        response = db.groups.insert_one(entry)
+
+    message = 'Group information written to database'
+    return redirect(url_for('home', message=message))
+
+@app.route("/listmongo", methods=('GET', 'POST'))
+def listmongo():
+    # Get a list of Groupss
+    my_groups = []
+
+    group = db.groups.find({})
+
+    groups = loads(dumps(group))
+
+    for g in groups:
+        group_name = g['group_name']
+        my_groups.append(group_name)
+
+    return render_template('list_groups.html', my_groups=my_groups)
